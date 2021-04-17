@@ -1,12 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
     public float playerSpeed;
+    public float currentTime;
+    public float startTime;
+    public GameObject winScreen;
+    public GameObject failScreen;
+    public Text countDownText;
     private TrailRenderer TR;
 
+    private float normalSpeed = 2;
+    private float specialSpeed = 5;
+    private bool stopCountDown;
     bool moveUp;
     bool moveDown;
     bool moveLeft;
@@ -16,13 +25,35 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         TR = GetComponent<TrailRenderer>();
+        currentTime = startTime;
+        playerSpeed = normalSpeed;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-        
+        PlayerControl();
+
+        if (stopCountDown != true)
+        {
+            currentTime -= 1 * Time.deltaTime;
+            countDownText.text = currentTime.ToString("00.00");
+        }
+        if (currentTime <= 0)
+        {
+            GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+            failScreen.SetActive(true);
+            stopCountDown = true;
+            moveRight = true;
+            moveLeft = true;
+            moveUp = true;
+            moveDown = true;
+        }
+
+    }
+
+    public void PlayerControl()
+    {
         if (Input.GetKeyDown(KeyCode.W) && moveDown != true)
         {
             GetComponent<Rigidbody2D>().velocity = new Vector3(0, playerSpeed, 0);
@@ -56,7 +87,14 @@ public class PlayerMovement : MonoBehaviour
             moveDown = false;
 
         }
-
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            playerSpeed = specialSpeed;
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            playerSpeed = normalSpeed;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -69,6 +107,8 @@ public class PlayerMovement : MonoBehaviour
         if (collision.tag == "Finish")
         {
             GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+            winScreen.SetActive(true);
+            stopCountDown = true;
             moveRight = true;
             moveLeft = true;
             moveUp = true;
