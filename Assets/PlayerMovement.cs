@@ -10,12 +10,15 @@ public class PlayerMovement : MonoBehaviour
     public float startTime;
     public GameObject winScreen;
     public GameObject failScreen;
+    public AudioSource winSound;
+    public AudioSource failSound;
     public Text countDownText;
     private TrailRenderer TR;
 
     private float normalSpeed = 2;
     private float specialSpeed = 5;
     private bool stopCountDown;
+    private bool isSoundPlay;
     bool moveUp;
     bool moveDown;
     bool moveLeft;
@@ -43,6 +46,11 @@ public class PlayerMovement : MonoBehaviour
         {
             GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
             failScreen.SetActive(true);
+            if (isSoundPlay != true)
+            { 
+                failSound.Play();
+                isSoundPlay = true;
+            }
             stopCountDown = true;
             moveRight = true;
             moveLeft = true;
@@ -108,6 +116,7 @@ public class PlayerMovement : MonoBehaviour
         {
             GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
             winScreen.SetActive(true);
+            winSound.Play();
             stopCountDown = true;
             moveRight = true;
             moveLeft = true;
